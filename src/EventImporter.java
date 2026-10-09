@@ -28,6 +28,9 @@ public class EventImporter {
             LocalDate date =
                     LocalDate.parse(values[0].trim(), FORMAT);
 
+            if(!(isValidDate(date.toString(), "MM-dd-uuuu")))
+                continue;
+
             String title = values[1].trim();
             String color = values[2].trim();
 
