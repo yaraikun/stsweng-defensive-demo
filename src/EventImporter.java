@@ -5,14 +5,15 @@ import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
 import java.time.format.ResolverStyle;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 
 public class EventImporter {
 
     private static final DateTimeFormatter FORMAT =
             DateTimeFormatter.ofPattern("MM/dd/uuuu")
                     .withResolverStyle(ResolverStyle.STRICT);
+
+    private static final String[] validColors = {"red", "blue", "green"};
 
     public static List<Event> importEvents(String filename)
             throws IOException {
@@ -37,6 +38,9 @@ public class EventImporter {
                 continue;
 
             if (!isValidDate(dateStr, FORMAT))
+                continue;
+
+            if (!Arrays.asList(validColors).contains(color))
                 continue;
 
             LocalDate date = LocalDate.parse(dateStr, FORMAT);
