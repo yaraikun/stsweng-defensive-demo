@@ -1,10 +1,13 @@
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.time.LocalDate;
-import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
+
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
+import java.time.format.DateTimeParseException;
+import java.time.format.ResolverStyle;
 
 public class EventImporter {
 
@@ -34,5 +37,19 @@ public class EventImporter {
         }
 
         return events;
+    }
+    
+
+     public static boolean isValidDate(String dateStr, String formatPattern) {
+        try {
+            DateTimeFormatter formatter = DateTimeFormatter
+                .ofPattern(formatPattern)
+                .withResolverStyle(ResolverStyle.STRICT);
+            
+            LocalDate.parse(dateStr, formatter);
+            return true;
+        } catch (DateTimeParseException e) {
+            return false;
+        }
     }
 }
