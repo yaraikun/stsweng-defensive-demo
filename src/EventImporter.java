@@ -1,56 +1,55 @@
-import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.time.LocalDate;
-import java.time.format.DateTimeFormatter;
-import java.time.format.DateTimeParseException;
-import java.time.format.ResolverStyle;
+import java.io.*;
+import java.nio.file.*;
+import java.time.*;
+import java.time.format.*;
 import java.util.*;
 
-public class EventImporter {
+public final class EventImporter {
+    private EventImporter() {};
 
-    private static final DateTimeFormatter FORMAT =
-            DateTimeFormatter.ofPattern("MM/dd/uuuu")
-                    .withResolverStyle(ResolverStyle.STRICT);
+    public static List<Event> importEvents(String filename) throws IOException {
+        if (filename == null || filename.isBlank())
+            throw new IllegalArgumentException("Filename cannot be null or blank");
 
-    private static final String[] validColors = {"red", "blue", "green"};
+        Path path = Path.of(filename);
 
-    public static List<Event> importEvents(String filename)
-            throws IOException {
+        if (!Files.exists(path))
+            throw new FileNotFoundException("File does not exist: " + filename);
+        if (!Files.isRegularFile(path))
+            throw new IllegalArgumentException("Path is not a regular file: " + filename);
+        if (!Files.isReadable(path))
+            throw new IOException("File is not readable: " + filename);
 
         List<Event> events = new ArrayList<>();
-        List<String> lines = Files.readAllLines(Path.of(filename));
 
-        for (String line : lines) {
-            if (line == null || line.trim().isEmpty())
-                continue;
+        try (BufferedReader reader = Files.newBufferedReader(path)) {
+            String line;
+            int lineNumber = 0;
 
-            String[] values = line.split(",", -1);
+            while ((line = reader.readLine()) != null) {
+                lineNumber++;
 
-            if (values.length < 3)
-                continue;
+                if (lineNumber == 1 && line.startsWith("\uFEFF"))
+                    line = line.substring(1);
+                if (line.trim().isEmpty())
+                    continue;
 
-            String dateStr = values[0].trim();
-            String title = values[1].trim();
-            String color = values[2].trim();
-
-            if (dateStr.isEmpty() || title.isEmpty() || color.isEmpty())
-                continue;
-
-            if (!isValidDate(dateStr, FORMAT))
-                continue;
-
-            if (!Arrays.asList(validColors).contains(color))
-                continue;
-
-            LocalDate date = LocalDate.parse(dateStr, FORMAT);
-            events.add(new Event(date, title, color));
+                try {
+                    Event event = EventParser.parse(line, lineNumber);
+                    events.add(event);
+                } catch (InvalidEventException e) {
+                    System.err.println("[SKIPPED]" + e.getMessage());
+                }
+            }
         }
 
-        return events;
+        return Collections.unmodifiableList(events);
     }
 
     public static boolean isValidDate(String dateStr, DateTimeFormatter formatter) {
+        if (dateStr == null || formatter == null)
+            return false;
+
         try {
             LocalDate.parse(dateStr, formatter);
             return true;
@@ -59,3 +58,5 @@ public class EventImporter {
         }
     }
 }
+
+
