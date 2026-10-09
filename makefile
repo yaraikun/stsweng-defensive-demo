@@ -7,21 +7,20 @@ JFLAGS = -d $(BIN_DIR) -sourcepath $(SRC_DIR)
 JVM = java
 
 SOURCES = $(wildcard $(SRC_DIR)/*.java)
-CLASSES = $(patsubst $(SRC_DIR)/%.java, $(BIN_DIR)/%.class, $(SOURCES))
 
-all: $(BIN_DIR) $(CLASSES)
+all: $(BIN_DIR)/.build_stamp
+
+$(BIN_DIR)/.build_stamp: $(SOURCES) | $(BIN_DIR)
+	$(JC) $(JFLAGS) $(SOURCES)
+	@touch $@
 
 $(BIN_DIR):
 	mkdir -p $(BIN_DIR)
 
-$(CLASSES): $(SOURCES) | $(BIN_DIR)
-	$(JC) $(JFLAGS) $(SOURCES)
-
 run: all
-	@if [ -f $(DATA_DIR)/events.csv ]; then cp $(DATA_DIR)/events.csv .; fi
 	$(JVM) -cp $(BIN_DIR) Main
 
 clean:
-	rm -rf $(BIN_DIR) events.csv
+	rm -rf $(BIN_DIR)
 
 .PHONY: all run clean
