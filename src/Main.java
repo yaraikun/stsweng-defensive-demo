@@ -5,7 +5,7 @@ public class Main {
     public static void main(String[] args) throws Exception {
 
         List<Event> events =
-                EventImporter.importEvents("darta/events.csv");
+                EventImporter.importEvents("data/events.csv");
 
         System.out.println("Imported Events");
 
