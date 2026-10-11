@@ -17,10 +17,10 @@ public enum EventColor {
     }
 
     public static boolean isValid(String color) {
-        if (color == null || color.isBlank())
+        if (color == null || color.isBlank()) {
             return false;
+        }
 
         return ALLOWED_NAMES.contains(color.trim().toLowerCase(Locale.ROOT));
     }
 }
-

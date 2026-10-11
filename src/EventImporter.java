@@ -6,8 +6,9 @@ public final class EventImporter {
     private EventImporter() {};
 
     public static List<Event> importEvents(String filename) throws IOException {
-        if (filename == null || filename.isBlank())
+        if (filename == null || filename.isBlank()) {
             throw new IllegalArgumentException("Filename cannot be null or blank");
+        }
 
         Path path = Path.of(filename);
 

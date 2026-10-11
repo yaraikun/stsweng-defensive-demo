@@ -15,15 +15,17 @@ public final class EventParser {
     private EventParser() {}
 
     public static Event parse(String line, int lineNumber) throws InvalidEventException {
-        if (line == null || line.trim().isEmpty())
+        if (line == null || line.trim().isEmpty()) {
             throw new InvalidEventException(lineNumber, "Line is empty");
+        }
 
         String[] values = splitCsvLine(line);
         
-        if (values.length != Column.COUNT)
+        if (values.length != Column.COUNT) {
             throw new InvalidEventException(lineNumber,
-                    "Expected exactly 3 columns, but found " + values.length + 
-                    ". (Note: Fields containing commas must be enclosed in double quotes.)");
+                "Expected exactly 3 columns, but found " + values.length + 
+                ". (Note: Fields containing commas must be enclosed in double quotes.)");
+        }
 
         for (Column col : Column.values()) {
             if (values[col.ordinal()].trim().isEmpty()) {
@@ -36,11 +38,13 @@ public final class EventParser {
         String titleStr = values[Column.TITLE.ordinal()].trim();
         String rawColor = values[Column.COLOR.ordinal()].trim();
 
-        if (!EventColor.isValid(rawColor))
+        if (!EventColor.isValid(rawColor)) {
             throw new InvalidEventException(lineNumber,
-                    "Invalid color '" + rawColor + "'. Allowed: red, blue, green");
+                "Invalid color '" + rawColor + "'. Allowed: red, blue, green");
+        }
 
         LocalDate date;
+
         try {
             date = LocalDate.parse(dateStr, DATE_FORMAT);
         } catch (DateTimeParseException e) {
@@ -75,4 +79,3 @@ public final class EventParser {
         return result.toArray(new String[0]);
     }
 }
-
