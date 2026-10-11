@@ -3,10 +3,8 @@ import java.time.format.*;
 import java.util.*;
 
 public final class EventParser {
-
     private enum Column {
         DATE, TITLE, COLOR;
-
         public static final int COUNT = values().length;
     }
 
@@ -20,11 +18,12 @@ public final class EventParser {
         if (line == null || line.trim().isEmpty())
             throw new InvalidEventException(lineNumber, "Line is empty");
 
-        String[] values = line.split(",", -1);
-
+        String[] values = splitCsvLine(line);
+        
         if (values.length != Column.COUNT)
             throw new InvalidEventException(lineNumber,
-                    "Expected exactly 3 columns, but found " + values.length);
+                    "Expected exactly 3 columns, but found " + values.length + 
+                    ". (Note: Fields containing commas must be enclosed in double quotes.)");
 
         for (Column col : Column.values()) {
             if (values[col.ordinal()].trim().isEmpty()) {
@@ -39,7 +38,7 @@ public final class EventParser {
 
         if (!EventColor.isValid(rawColor))
             throw new InvalidEventException(lineNumber,
-                    "Invalid color '" + rawColor + "'");
+                    "Invalid color '" + rawColor + "'. Allowed: red, blue, green");
 
         LocalDate date;
         try {
@@ -50,8 +49,30 @@ public final class EventParser {
         }
 
         String normalizedColor = rawColor.toLowerCase(Locale.ROOT);
-
         return new Event(date, titleStr, normalizedColor);
     }
-    
+
+    private static String[] splitCsvLine(String line) {
+        List<String> result = new ArrayList<>();
+        StringBuilder current = new StringBuilder();
+        boolean inQuotes = false;
+        
+        for (int i = 0; i < line.length(); i++) {
+            char c = line.charAt(i);
+
+            if (c == '"') {
+                inQuotes = !inQuotes;
+            } else if (c == ',' && !inQuotes) {
+                result.add(current.toString());
+                current.setLength(0);
+            } else {
+                current.append(c);
+            }
+        }
+
+        result.add(current.toString());
+        
+        return result.toArray(new String[0]);
+    }
 }
+
