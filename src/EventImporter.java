@@ -1,3 +1,9 @@
+/**
+ * CALUPIG, Evan Riley L.
+ * RANARA, Ramil Carlos B.
+ * TRINIDAD, Nathan P.
+ */
+
 import java.io.*;
 import java.nio.file.*;
 import java.util.*;

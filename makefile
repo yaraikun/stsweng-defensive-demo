@@ -1,3 +1,9 @@
+#
+# CALUPIG, Evan Riley L.
+# RANARA, Ramil Carlos B.
+# TRINIDAD, Nathan P.
+#
+
 SRC_DIR = src
 BIN_DIR = bin
 DATA_DIR = data

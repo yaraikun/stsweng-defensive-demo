@@ -1,3 +1,9 @@
+/**
+ * CALUPIG, Evan Riley L.
+ * RANARA, Ramil Carlos B.
+ * TRINIDAD, Nathan P.
+ */
+
 public class InvalidEventException extends Exception {
     private final int lineNumber;
 

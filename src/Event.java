@@ -1,3 +1,9 @@
+/**
+ * CALUPIG, Evan Riley L.
+ * RANARA, Ramil Carlos B.
+ * TRINIDAD, Nathan P.
+ */
+
 import java.time.LocalDate;
 
 public class Event {
